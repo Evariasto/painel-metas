@@ -986,62 +986,58 @@
       }
     });
 
-    // --- LINHA DE TOTAIS ---
-    // Somar PESO e PESO ATING. de todas as linhas REAL do bloco
+  }); // fim forEach table
+
+  // --- LINHA DE TOTAIS GLOBAIS (apenas no último bloco) ---
+  const allTables = document.querySelectorAll('table');
+  const lastTable = allTables[allTables.length - 1];
+  if (lastTable) {
+    // Somar PESO e PESO ATING. de TODOS os blocos
     let totalPeso = 0, totalAtingido = 0;
-    table.querySelectorAll('tbody tr.row-meta').forEach(metaRow => {
+    document.querySelectorAll('tbody tr.row-meta').forEach(metaRow => {
       const pesoTxt = (metaRow.querySelector('.td-peso')?.textContent || '').trim();
       const pesoNum = parseFloat(pesoTxt.replace('%','').replace(',','.'));
       if (!isNaN(pesoNum)) totalPeso += pesoNum;
     });
-    table.querySelectorAll('tbody td.td-peso-ating').forEach(td => {
+    document.querySelectorAll('tbody td.td-peso-ating').forEach(td => {
       const v = parseFloat((td.textContent || '').replace('%','').replace(',','.'));
       if (!isNaN(v)) totalAtingido += v;
     });
 
-    // Contar colunas totais da tabela (da 1ª linha do thead)
-    const totalCols = table.querySelector('thead tr')?.querySelectorAll('th').length || 20;
-
-    const tbody = table.querySelector('tbody');
+    const totalCols = lastTable.querySelector('thead tr')?.querySelectorAll('th').length || 20;
+    const tbody = lastTable.querySelector('tbody');
     const tRow = document.createElement('tr');
     tRow.className = 'row-total';
-
-    // Células: [lbl colspan=3] [peso total] [tipo vazio] [12 meses vazios] [ytd acum vazio] [real acum vazio] [peso ating total] [fy vazio] [status vazio]
-    // = 3 + 1 + 1 + 12 + 1 + 1 + 1 + 1 + 1 = totalCols
-    const colsAfterPeso = totalCols - 4; // tudo após as 4 primeiras (lbl+peso)
+    const colsAfterPeso = totalCols - 4;
 
     const tdLbl = document.createElement('td');
     tdLbl.colSpan = 3; tdLbl.className = 'tl total-lbl';
-    tdLbl.textContent = 'TOTAL DO BLOCO';
+    tdLbl.textContent = 'TOTAL GERAL';
     tRow.appendChild(tdLbl);
 
     const tdPeso = document.createElement('td');
-    tdPeso.className = 'td-ytd cy'; // dourado
+    tdPeso.className = 'td-ytd cy';
     tdPeso.textContent = totalPeso.toFixed(1).replace('.',',') + '%';
     tRow.appendChild(tdPeso);
 
-    // Células intermediárias vazias (tipo + 12 meses + YTD acum + REAL acum)
-    const midCols = colsAfterPeso - 3; // -3: peso ating + FY + status
+    const midCols = colsAfterPeso - 3;
     for (let i = 0; i < midCols; i++) {
-      const td = document.createElement('td');
-      td.className = 'emp'; td.textContent = '';
+      const td = document.createElement('td'); td.className = 'emp'; td.textContent = '';
       tRow.appendChild(td);
     }
 
-    // PESO ATING. total
     const tdAting = document.createElement('td');
     tdAting.className = 'td-ytd ' + (totalAtingido >= totalPeso * 0.7 ? 'cg' : totalAtingido >= totalPeso * 0.5 ? 'cy' : 'cr');
     tdAting.textContent = totalAtingido.toFixed(1).replace('.',',') + '%';
     tRow.appendChild(tdAting);
 
-    // FY e Status (vazios)
     for (let i = 0; i < 2; i++) {
       const td = document.createElement('td'); td.textContent = '';
       tRow.appendChild(td);
     }
 
     tbody.appendChild(tRow);
-  });
+  }
 </script>
 </body>
 </html>
