@@ -129,6 +129,8 @@
   .pill.y { background:#1c1500; color:var(--gold); border:1px solid #3a2a00; }
   .pill.z { background:var(--s3); color:var(--muted); border:1px solid var(--bdr); }
   .dot { width:5px; height:5px; border-radius:50%; background:currentColor; }
+  .row-total td { background: #0e0e0e !important; border-top: 2px solid var(--gold-dk) !important; border-bottom: 2px solid var(--bdr2); font-weight: 700; font-size: 11px; }
+  .row-total .total-lbl { color: var(--gold); text-align: left; font-family: 'Bebas Neue', sans-serif; letter-spacing: 2px; font-size: 13px; }
 
   .area-tag { font-size:9px; font-weight:700; letter-spacing:.8px; text-transform:uppercase; }
   .td-area { text-align:center !important; vertical-align:middle; min-width:90px; }
@@ -983,11 +985,11 @@
         // PESO ATING.: último mês hit → peso real, senão → 0%
         const rTd3 = document.createElement('td');
         if (lastMonthHit === null) {
-          rTd3.className = 'td-ytd emp'; rTd3.textContent = '—';
+          rTd3.className = 'td-ytd emp td-peso-ating'; rTd3.textContent = '—';
         } else if (lastMonthHit) {
-          rTd3.className = 'td-ytd hit'; rTd3.textContent = pesoText;
+          rTd3.className = 'td-ytd hit td-peso-ating'; rTd3.textContent = pesoText;
         } else {
-          rTd3.className = 'td-ytd miss'; rTd3.textContent = '0%';
+          rTd3.className = 'td-ytd miss td-peso-ating'; rTd3.textContent = '0%';
         }
         realYtdTd.parentNode.insertBefore(rTd3, realYtdTd); // posição 3
 
@@ -1001,6 +1003,62 @@
         realYtdTd.parentNode.insertBefore(rTd1, rTd2); // posição 1
       }
     });
+
+    // --- LINHA DE TOTAIS ---
+    // Somar PESO e PESO ATING. de todas as linhas REAL do bloco
+    let totalPeso = 0, totalAtingido = 0;
+    table.querySelectorAll('tbody tr.row-meta').forEach(metaRow => {
+      const pesoTxt = (metaRow.querySelector('.td-peso')?.textContent || '').trim();
+      const pesoNum = parseFloat(pesoTxt.replace('%','').replace(',','.'));
+      if (!isNaN(pesoNum)) totalPeso += pesoNum;
+    });
+    table.querySelectorAll('tbody td.td-peso-ating').forEach(td => {
+      const v = parseFloat((td.textContent || '').replace('%','').replace(',','.'));
+      if (!isNaN(v)) totalAtingido += v;
+    });
+
+    // Contar colunas totais da tabela (da 1ª linha do thead)
+    const totalCols = table.querySelector('thead tr')?.querySelectorAll('th').length || 20;
+
+    const tbody = table.querySelector('tbody');
+    const tRow = document.createElement('tr');
+    tRow.className = 'row-total';
+
+    // Células: [lbl colspan=3] [peso total] [tipo vazio] [12 meses vazios] [ytd acum vazio] [real acum vazio] [peso ating total] [fy vazio] [status vazio]
+    // = 3 + 1 + 1 + 12 + 1 + 1 + 1 + 1 + 1 = totalCols
+    const colsAfterPeso = totalCols - 4; // tudo após as 4 primeiras (lbl+peso)
+
+    const tdLbl = document.createElement('td');
+    tdLbl.colSpan = 3; tdLbl.className = 'tl total-lbl';
+    tdLbl.textContent = 'TOTAL DO BLOCO';
+    tRow.appendChild(tdLbl);
+
+    const tdPeso = document.createElement('td');
+    tdPeso.className = 'td-ytd cy'; // dourado
+    tdPeso.textContent = totalPeso.toFixed(1).replace('.',',') + '%';
+    tRow.appendChild(tdPeso);
+
+    // Células intermediárias vazias (tipo + 12 meses + YTD acum + REAL acum)
+    const midCols = colsAfterPeso - 3; // -3: peso ating + FY + status
+    for (let i = 0; i < midCols; i++) {
+      const td = document.createElement('td');
+      td.className = 'emp'; td.textContent = '';
+      tRow.appendChild(td);
+    }
+
+    // PESO ATING. total
+    const tdAting = document.createElement('td');
+    tdAting.className = 'td-ytd ' + (totalAtingido >= totalPeso * 0.7 ? 'cg' : totalAtingido >= totalPeso * 0.5 ? 'cy' : 'cr');
+    tdAting.textContent = totalAtingido.toFixed(1).replace('.',',') + '%';
+    tRow.appendChild(tdAting);
+
+    // FY e Status (vazios)
+    for (let i = 0; i < 2; i++) {
+      const td = document.createElement('td'); td.textContent = '';
+      tRow.appendChild(td);
+    }
+
+    tbody.appendChild(tRow);
   });
 </script>
 </body>
