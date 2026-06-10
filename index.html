@@ -844,9 +844,9 @@
   const numMeses = (new Date().getMonth() + 11) % 12 + 1;
 
   document.querySelectorAll('table').forEach(table => {
-    // Cabeçalho: insere META ACUM. e REAL ACUM. antes do th-ytd
+    // Cabeçalho: insere YTD, REAL ACUM. e PESO ATING. antes do th-ytd
     table.querySelectorAll('thead th.th-ytd').forEach(th => {
-      ['YTD','REAL ACUM.'].forEach(label => {
+      ['YTD','REAL ACUM.','PESO ATING.'].forEach(label => {
         const newTh = document.createElement('th');
         newTh.className = 'th-ytd';
         newTh.textContent = label;
@@ -899,27 +899,61 @@
         refTd.parentNode.insertBefore(td2, refTd);
       };
 
-      // Linha META: ordem final desejada: [META ACUM.=metaAccum] [REAL ACUM.=—]
+      // --- PESO ATINGIDO: baseado no último mês com dado REAL ---
+      const goalId = metaRow.querySelector('.td-id')?.textContent.trim();
+      const lowerBetter = ['3.1','3.3','3.8','3.9','3.10','3.11','3.12','3.13','3.14','3.23','3.24'];
+      const isLower = lowerBetter.includes(goalId);
+      const pesoText = metaRow.querySelector('.td-peso')?.textContent.trim() || '—';
+
+      // Encontrar último mês com dado REAL e verificar hit/miss
+      let lastMonthHit = null;
+      if (realCells) {
+        for (let i = numMeses - 1; i >= 0; i--) {
+          const td = realCells[1 + i];
+          if (!td) continue;
+          const rv = parseVal(td.textContent);
+          if (rv === null) continue;
+          const mv = parseVal(metaCells[5 + i]?.textContent || '');
+          if (mv === null) continue;
+          lastMonthHit = isLower ? rv <= mv : rv >= mv;
+          break;
+        }
+      }
+
+      // Linha META: ordem final: [YTD=metaAccum] [REAL ACUM.=—] [PESO ATING.=pesoText]
+      const mTd3 = document.createElement('td');
+      mTd3.className = 'td-ytd neu'; mTd3.textContent = pesoText;
+      metaYtdTd.parentNode.insertBefore(mTd3, metaYtdTd); // posição 3
       const mTd2 = document.createElement('td');
       mTd2.className = 'td-ytd emp'; mTd2.textContent = '—';
-      metaYtdTd.parentNode.insertBefore(mTd2, metaYtdTd); // inserido por último → posição 2
+      metaYtdTd.parentNode.insertBefore(mTd2, mTd3); // posição 2
       const mTd1 = document.createElement('td');
       mTd1.className = 'td-ytd neu'; mTd1.textContent = metaAccum;
-      metaYtdTd.parentNode.insertBefore(mTd1, mTd2); // inserido antes do mTd2 → posição 1
+      metaYtdTd.parentNode.insertBefore(mTd1, mTd2); // posição 1
 
-      // Linha REAL: ordem final: [META ACUM.=metaAccum] [REAL ACUM.=realAccum]
+      // Linha REAL: ordem final: [YTD=metaAccum] [REAL ACUM.=realAccum] [PESO ATING.=peso ou 0%]
       if (realRow?.classList.contains('row-real') && realYtdTd) {
-        const goalId = metaRow.querySelector('.td-id')?.textContent.trim();
-        const lowerBetter = ['3.1','3.3','3.8','3.9','3.10','3.11','3.12','3.13','3.14','3.23','3.24'];
-        const isLower = lowerBetter.includes(goalId);
         const isHit = realCount > 0 ? (isLower ? realSum <= metaSum : realSum >= metaSum) : false;
+
+        // PESO ATING.: último mês hit → peso real, senão → 0%
+        const rTd3 = document.createElement('td');
+        if (lastMonthHit === null) {
+          rTd3.className = 'td-ytd emp'; rTd3.textContent = '—';
+        } else if (lastMonthHit) {
+          rTd3.className = 'td-ytd hit'; rTd3.textContent = pesoText;
+        } else {
+          rTd3.className = 'td-ytd miss'; rTd3.textContent = '0%';
+        }
+        realYtdTd.parentNode.insertBefore(rTd3, realYtdTd); // posição 3
+
         const rTd2 = document.createElement('td');
         rTd2.className = 'td-ytd ' + (realCount > 0 ? (isHit ? 'hit' : 'miss') : 'emp');
         rTd2.textContent = realAccum;
-        realYtdTd.parentNode.insertBefore(rTd2, realYtdTd); // inserido por último → posição 2
+        realYtdTd.parentNode.insertBefore(rTd2, rTd3); // posição 2
+
         const rTd1 = document.createElement('td');
         rTd1.className = 'td-ytd neu'; rTd1.textContent = metaAccum;
-        realYtdTd.parentNode.insertBefore(rTd1, rTd2); // inserido antes → posição 1
+        realYtdTd.parentNode.insertBefore(rTd1, rTd2); // posição 1
       }
     });
   });
