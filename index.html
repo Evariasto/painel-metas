@@ -190,17 +190,19 @@
     </div>
   </div>
 
+  <!-- FILTRO GLOBAL -->
+  <div class="filter-bar" id="filter-global" style="margin-bottom:18px;">
+    <button class="filter-btn active-all" data-filter="all">Todos</button>
+    <button class="filter-btn" data-filter="r">● Abaixo</button>
+    <button class="filter-btn" data-filter="g">● Atingido</button>
+    <button class="filter-btn" data-filter="y">● Atenção</button>
+  </div>
+
   <!-- BLOCO 3 -->
   <div class="sec">
     <div class="sec-hdr">
       <h2>Metas de Gestão — Bloco 3</h2>
       <span class="sec-badge">3.1 — 3.24</span>
-    </div>
-    <div class="filter-bar" data-table="0">
-      <button class="filter-btn active-all" data-filter="all">Todos</button>
-      <button class="filter-btn" data-filter="r">● Abaixo</button>
-      <button class="filter-btn" data-filter="g">● Atingido</button>
-      <button class="filter-btn" data-filter="y">● Atenção</button>
     </div>
     <div class="twrap">
       <table>
@@ -692,12 +694,6 @@
       <h2>Metas de Projetos — Bloco 4</h2>
       <span class="sec-badge">4.1 — 4.6</span>
     </div>
-    <div class="filter-bar" data-table="1">
-      <button class="filter-btn active-all" data-filter="all">Todos</button>
-      <button class="filter-btn" data-filter="r">● Abaixo</button>
-      <button class="filter-btn" data-filter="g">● Atingido</button>
-      <button class="filter-btn" data-filter="y">● Atenção</button>
-    </div>
     <div class="twrap">
       <table>
         <colgroup>
@@ -909,28 +905,21 @@
   document.getElementById('mai-count').textContent=maiHit+' de '+maiTotal+' metas atingidas';
 
 
-  // Filtros de status por bloco
-  const tables = document.querySelectorAll('table');
-  document.querySelectorAll('.filter-bar').forEach(bar => {
-    const tIdx = parseInt(bar.dataset.table);
-    const table = tables[tIdx];
-    bar.querySelectorAll('.filter-btn').forEach(btn => {
-      btn.addEventListener('click', () => {
-        // atualiza botão ativo
-        bar.querySelectorAll('.filter-btn').forEach(b => b.className = 'filter-btn');
-        const f = btn.dataset.filter;
-        btn.classList.add('filter-btn', f === 'all' ? 'active-all' : f === 'r' ? 'active-r' : f === 'g' ? 'active-g' : 'active-y');
-        // filtra linhas
-        table.querySelectorAll('tbody tr.row-meta').forEach(metaRow => {
-          const realRow = metaRow.nextElementSibling;
-          const pill = metaRow.querySelector('.pill');
-          const show = f === 'all'
-            || (f === 'r' && pill?.textContent.includes('Abaixo'))
-            || (f === 'g' && pill?.textContent.includes('Atingido'))
-            || (f === 'y' && pill?.textContent.includes('Atenção'));
-          metaRow.classList.toggle('row-hidden', !show);
-          if (realRow?.classList.contains('row-real')) realRow.classList.toggle('row-hidden', !show);
-        });
+  // Filtro global — filtra os dois blocos
+  document.querySelectorAll('#filter-global .filter-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('#filter-global .filter-btn').forEach(b => b.className = 'filter-btn');
+      const f = btn.dataset.filter;
+      btn.classList.add('filter-btn', f==='all'?'active-all':f==='r'?'active-r':f==='g'?'active-g':'active-y');
+      document.querySelectorAll('tbody tr.row-meta').forEach(metaRow => {
+        const realRow = metaRow.nextElementSibling;
+        const pill = metaRow.querySelector('.pill');
+        const show = f==='all'
+          || (f==='r' && pill?.textContent.includes('Abaixo'))
+          || (f==='g' && pill?.textContent.includes('Atingido'))
+          || (f==='y' && pill?.textContent.includes('Atenção'));
+        metaRow.classList.toggle('row-hidden', !show);
+        if (realRow?.classList.contains('row-real')) realRow.classList.toggle('row-hidden', !show);
       });
     });
   });
