@@ -936,11 +936,13 @@
     const n = parseFloat(t.replace('.','').replace(',','.'));
     return isNaN(n) ? null : n;
   }
-  function fmtVal(sum, sample) {
+  function isMonetary(sample) { return /^R\$/.test(sample.trim()); }
+  function fmtVal(sum, count, sample) {
     sample = sample.trim();
-    if (/^R\$/.test(sample)) return 'R$' + sum.toFixed(1).replace('.',',') + 'M';
-    if (/%$/.test(sample)) return sum.toFixed(1).replace('.',',') + '%';
-    return String(Math.round(sum));
+    const val = isMonetary(sample) ? sum : sum / count; // soma p/ R$, média p/ resto
+    if (/^R\$/.test(sample)) return 'R$' + val.toFixed(1).replace('.',',') + 'M';
+    if (/%$/.test(sample)) return val.toFixed(1).replace('.',',') + '%';
+    return val % 1 === 0 ? String(Math.round(val)) : val.toFixed(2).replace('.',',');
   }
 
   // Número de meses fechados (JAN=1 … MAI=5)
@@ -986,8 +988,8 @@
         }
       }
 
-      const metaAccum = metaCount > 0 ? fmtVal(metaSum, sample) : '—';
-      const realAccum = realCount > 0 ? fmtVal(realSum, sample) : '—';
+      const metaAccum = metaCount > 0 ? fmtVal(metaSum, metaCount, sample) : '—';
+      const realAccum = realCount > 0 ? fmtVal(realSum, realCount, sample) : '—';
 
       // Insere nas linhas META e REAL
       const insertBefore = (row, refTd, val, cls) => {
