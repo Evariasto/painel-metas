@@ -923,6 +923,46 @@
       });
     });
   });
+
+  // Coluna META YTD (projetado) antes do YTD/FY (realizado)
+  document.querySelectorAll('table').forEach(table => {
+    // Adiciona th "META YTD" antes do th-ytd
+    table.querySelectorAll('thead th.th-ytd').forEach(th => {
+      const newTh = document.createElement('th');
+      newTh.className = 'th-ytd';
+      newTh.style.borderRight = '1px solid var(--bdr2)';
+      newTh.textContent = 'META YTD';
+      th.parentNode.insertBefore(newTh, th);
+      // Renomeia o existente para deixar claro
+      th.textContent = 'REAL YTD';
+    });
+
+    // Para cada par META/REAL, insere o valor projetado
+    table.querySelectorAll('tbody tr.row-meta').forEach(metaRow => {
+      const realRow = metaRow.nextElementSibling;
+      const metaYtdTd = metaRow.querySelector('.td-ytd');
+      if (!metaYtdTd) return;
+      const projValue = metaYtdTd.textContent.trim();
+
+      // Célula na linha META (valor projetado = próprio META YTD)
+      const mTd = document.createElement('td');
+      mTd.className = 'td-ytd neu';
+      mTd.style.borderRight = '1px solid var(--bdr2)';
+      mTd.textContent = projValue;
+      metaYtdTd.parentNode.insertBefore(mTd, metaYtdTd);
+
+      // Célula na linha REAL (mostra o projetado para comparar)
+      if (realRow?.classList.contains('row-real')) {
+        const realYtdTd = realRow.querySelector('.td-ytd');
+        const rTd = document.createElement('td');
+        rTd.className = 'td-ytd neu';
+        rTd.style.borderRight = '1px solid var(--bdr2)';
+        rTd.textContent = projValue;
+        if (realYtdTd) realYtdTd.parentNode.insertBefore(rTd, realYtdTd);
+        else realRow.appendChild(rTd);
+      }
+    });
+  });
 </script>
 </body>
 </html>
