@@ -846,7 +846,7 @@
   document.querySelectorAll('table').forEach(table => {
     // Cabeçalho: insere META ACUM. e REAL ACUM. antes do th-ytd
     table.querySelectorAll('thead th.th-ytd').forEach(th => {
-      ['REAL ACUM.','META ACUM.'].forEach(label => {
+      ['META ACUM.','REAL ACUM.'].forEach(label => {
         const newTh = document.createElement('th');
         newTh.className = 'th-ytd';
         newTh.textContent = label;
@@ -899,29 +899,27 @@
         refTd.parentNode.insertBefore(td2, refTd);
       };
 
-      // Linha META: inserir na ordem inversa (insertBefore empilha ao contrário)
-      // ordem final desejada: [REAL ACUM.=—] [META ACUM.=metaAccum]
-      const mTd1 = document.createElement('td');
-      mTd1.className = 'td-ytd neu'; mTd1.textContent = metaAccum;
-      metaYtdTd.parentNode.insertBefore(mTd1, metaYtdTd); // inserido por último → posição 2
+      // Linha META: ordem final desejada: [META ACUM.=metaAccum] [REAL ACUM.=—]
       const mTd2 = document.createElement('td');
       mTd2.className = 'td-ytd emp'; mTd2.textContent = '—';
-      metaYtdTd.parentNode.insertBefore(mTd2, mTd1); // inserido antes do mTd1 → posição 1
+      metaYtdTd.parentNode.insertBefore(mTd2, metaYtdTd); // inserido por último → posição 2
+      const mTd1 = document.createElement('td');
+      mTd1.className = 'td-ytd neu'; mTd1.textContent = metaAccum;
+      metaYtdTd.parentNode.insertBefore(mTd1, mTd2); // inserido antes do mTd2 → posição 1
 
-      // Linha REAL: ordem final: [REAL ACUM.=realAccum] [META ACUM.=metaAccum]
+      // Linha REAL: ordem final: [META ACUM.=metaAccum] [REAL ACUM.=realAccum]
       if (realRow?.classList.contains('row-real') && realYtdTd) {
-        const rTd1 = document.createElement('td');
-        rTd1.className = 'td-ytd neu'; rTd1.textContent = metaAccum;
-        realYtdTd.parentNode.insertBefore(rTd1, realYtdTd); // posição 2
-        const rTd2 = document.createElement('td');
-        // Metas onde ABAIXO é BOM (orçamento/custo): lógica invertida
         const goalId = metaRow.querySelector('.td-id')?.textContent.trim();
         const lowerBetter = ['3.1','3.3','3.8','3.9','3.10','3.11','3.12','3.13','3.14','3.23','3.24'];
         const isLower = lowerBetter.includes(goalId);
         const isHit = realCount > 0 ? (isLower ? realSum <= metaSum : realSum >= metaSum) : false;
+        const rTd2 = document.createElement('td');
         rTd2.className = 'td-ytd ' + (realCount > 0 ? (isHit ? 'hit' : 'miss') : 'emp');
         rTd2.textContent = realAccum;
-        realYtdTd.parentNode.insertBefore(rTd2, rTd1); // posição 1
+        realYtdTd.parentNode.insertBefore(rTd2, realYtdTd); // inserido por último → posição 2
+        const rTd1 = document.createElement('td');
+        rTd1.className = 'td-ytd neu'; rTd1.textContent = metaAccum;
+        realYtdTd.parentNode.insertBefore(rTd1, rTd2); // inserido antes → posição 1
       }
     });
   });
