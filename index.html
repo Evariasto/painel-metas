@@ -924,42 +924,101 @@
     });
   });
 
-  // Coluna META YTD (projetado) antes do YTD/FY (realizado)
+  // Helpers para parsear e formatar valores das células
+  function parseVal(t) {
+    t = t.trim();
+    if (!t || t === '—' || t === '-') return null;
+    if (/^\d{2}:\d{2}/.test(t)) return null; // tempo: não soma
+    const rm = t.match(/^R\$([0-9,.]+)M$/);
+    if (rm) return parseFloat(rm[1].replace('.','').replace(',','.'));
+    const pct = t.match(/^([0-9,.]+)%$/);
+    if (pct) return parseFloat(pct[1].replace('.','').replace(',','.'));
+    const n = parseFloat(t.replace('.','').replace(',','.'));
+    return isNaN(n) ? null : n;
+  }
+  function fmtVal(sum, sample) {
+    sample = sample.trim();
+    if (/^R\$/.test(sample)) return 'R$' + sum.toFixed(1).replace('.',',') + 'M';
+    if (/%$/.test(sample)) return sum.toFixed(1).replace('.',',') + '%';
+    return String(Math.round(sum));
+  }
+
+  // Número de meses fechados (JAN=1 … MAI=5)
+  const numMeses = (new Date().getMonth() + 11) % 12 + 1;
+
   document.querySelectorAll('table').forEach(table => {
-    // Adiciona th "META YTD" antes do th-ytd
+    // Cabeçalho: insere META ACUM. e REAL ACUM. antes do th-ytd
     table.querySelectorAll('thead th.th-ytd').forEach(th => {
-      const newTh = document.createElement('th');
-      newTh.className = 'th-ytd';
-      newTh.style.borderRight = '1px solid var(--bdr2)';
-      newTh.textContent = 'META YTD';
-      th.parentNode.insertBefore(newTh, th);
-      // Renomeia o existente para deixar claro
-      th.textContent = 'REAL YTD';
+      ['REAL ACUM.','META ACUM.'].forEach(label => {
+        const newTh = document.createElement('th');
+        newTh.className = 'th-ytd';
+        newTh.textContent = label;
+        th.parentNode.insertBefore(newTh, th);
+      });
     });
 
-    // Para cada par META/REAL, insere o valor projetado
+    // Dados: calcula acumulado para cada par META/REAL
     table.querySelectorAll('tbody tr.row-meta').forEach(metaRow => {
       const realRow = metaRow.nextElementSibling;
+      const metaCells = metaRow.querySelectorAll('td');
+      const realCells = realRow?.querySelectorAll('td');
       const metaYtdTd = metaRow.querySelector('.td-ytd');
+      const realYtdTd = realRow?.querySelector('.td-ytd');
       if (!metaYtdTd) return;
-      const projValue = metaYtdTd.textContent.trim();
 
-      // Célula na linha META (valor projetado = próprio META YTD)
-      const mTd = document.createElement('td');
-      mTd.className = 'td-ytd neu';
-      mTd.style.borderRight = '1px solid var(--bdr2)';
-      mTd.textContent = projValue;
-      metaYtdTd.parentNode.insertBefore(mTd, metaYtdTd);
+      // Células dos meses: META row começa em índice 5 (após ID,Obj,Área,Peso,META_label)
+      let metaSum = 0, metaCount = 0, sample = '';
+      for (let i = 0; i < numMeses; i++) {
+        const td = metaCells[5 + i];
+        if (!td) continue;
+        const v = parseVal(td.textContent);
+        if (v !== null) { metaSum += v; metaCount++; sample = td.textContent.trim(); }
+      }
 
-      // Célula na linha REAL (mostra o projetado para comparar)
-      if (realRow?.classList.contains('row-real')) {
-        const realYtdTd = realRow.querySelector('.td-ytd');
-        const rTd = document.createElement('td');
-        rTd.className = 'td-ytd neu';
-        rTd.style.borderRight = '1px solid var(--bdr2)';
-        rTd.textContent = projValue;
-        if (realYtdTd) realYtdTd.parentNode.insertBefore(rTd, realYtdTd);
-        else realRow.appendChild(rTd);
+      // Células dos meses: REAL row começa em índice 1 (após REAL_label)
+      let realSum = 0, realCount = 0;
+      if (realCells) {
+        for (let i = 0; i < numMeses; i++) {
+          const td = realCells[1 + i];
+          if (!td) continue;
+          const v = parseVal(td.textContent);
+          if (v !== null) { realSum += v; realCount++; }
+        }
+      }
+
+      const metaAccum = metaCount > 0 ? fmtVal(metaSum, sample) : '—';
+      const realAccum = realCount > 0 ? fmtVal(realSum, sample) : '—';
+
+      // Insere nas linhas META e REAL
+      const insertBefore = (row, refTd, val, cls) => {
+        const td = document.createElement('td');
+        td.className = 'td-ytd ' + cls;
+        td.textContent = val;
+        refTd.parentNode.insertBefore(td, refTd);
+        // segundo td (REAL ACUM. na linha META fica vazio)
+        const td2 = document.createElement('td');
+        td2.className = 'td-ytd emp';
+        td2.textContent = '—';
+        refTd.parentNode.insertBefore(td2, refTd);
+      };
+
+      // Linha META: META ACUM | REAL ACUM (vazio)
+      const mTd1 = document.createElement('td');
+      mTd1.className = 'td-ytd neu'; mTd1.textContent = metaAccum;
+      metaYtdTd.parentNode.insertBefore(mTd1, metaYtdTd);
+      const mTd2 = document.createElement('td');
+      mTd2.className = 'td-ytd emp'; mTd2.textContent = '—';
+      metaYtdTd.parentNode.insertBefore(mTd2, metaYtdTd);
+
+      // Linha REAL: META ACUM (referência) | REAL ACUM
+      if (realRow?.classList.contains('row-real') && realYtdTd) {
+        const rTd1 = document.createElement('td');
+        rTd1.className = 'td-ytd neu'; rTd1.textContent = metaAccum;
+        realYtdTd.parentNode.insertBefore(rTd1, realYtdTd);
+        const rTd2 = document.createElement('td');
+        rTd2.className = 'td-ytd ' + (realCount > 0 ? (realSum >= metaSum ? 'hit' : 'miss') : 'emp');
+        rTd2.textContent = realAccum;
+        realYtdTd.parentNode.insertBefore(rTd2, realYtdTd);
       }
     });
   });
