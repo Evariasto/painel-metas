@@ -165,9 +165,9 @@
   <!-- CARDS -->
   <div class="cards">
     <div class="card">
-      <div class="card-lbl">Budget YTD — Receita Acumulada</div>
-      <div class="card-val cr">R$ 18,0 MM</div>
-      <div class="card-sub">Meta YTD: R$ 18,5 MM &nbsp;·&nbsp; <span class="cr">▼ 2,7% abaixo</span></div>
+      <div class="card-lbl">Budget YTD — Orçamento Acumulado</div>
+      <div class="card-val cg">R$ 18,0 MM</div>
+      <div class="card-sub">Limite YTD: R$ 18,5 MM &nbsp;·&nbsp; <span class="cg">▼ 2,7% dentro do orçamento</span></div>
       <div class="card-info">Soma da receita mensal realizada de Jan a Mai/26 (meta 3.1). Desvio calculado sobre a meta acumulada do período.</div>
     </div>
     <div class="card">
@@ -1025,7 +1025,12 @@
         rTd1.className = 'td-ytd neu'; rTd1.textContent = metaAccum;
         realYtdTd.parentNode.insertBefore(rTd1, realYtdTd); // posição 2
         const rTd2 = document.createElement('td');
-        rTd2.className = 'td-ytd ' + (realCount > 0 ? (realSum >= metaSum ? 'hit' : 'miss') : 'emp');
+        // Metas onde ABAIXO é BOM (orçamento/custo): lógica invertida
+        const goalId = metaRow.querySelector('.td-id')?.textContent.trim();
+        const invertidas = ['3.1'];
+        const isInvertida = invertidas.includes(goalId);
+        const isHit = realCount > 0 ? (isInvertida ? realSum <= metaSum : realSum >= metaSum) : false;
+        rTd2.className = 'td-ytd ' + (realCount > 0 ? (isHit ? 'hit' : 'miss') : 'emp');
         rTd2.textContent = realAccum;
         realYtdTd.parentNode.insertBefore(rTd2, rTd1); // posição 1
       }
