@@ -786,32 +786,6 @@
   maiEl.className='card-val '+(maiPct>=70?'cg':maiPct>=50?'cy':'cr');
   document.getElementById('mai-count').textContent=maiHit+' de '+maiTotal+' metas atingidas';
 
-  // KPI Peso Esperado e Peso Realizado — usa célula td-peso-ating (mesmo critério do TOTAL DO BLOCO)
-  let pesoEsperado=0, pesoRealizado=0;
-  document.querySelectorAll('tbody td.td-peso-ating').forEach(td=>{
-    // Buscar o peso da meta correspondente (linha row-meta do mesmo par)
-    const realRow=td.closest('tr.row-real');
-    if(!realRow) return;
-    const metaRow=realRow.previousElementSibling;
-    if(!metaRow?.classList.contains('row-meta')) return;
-    const pesoTxt=(metaRow.querySelector('.td-peso')?.textContent||'').trim();
-    const pesoNum=parseFloat(pesoTxt.replace('%','').replace(',','.'));
-    if(isNaN(pesoNum)||pesoNum===0) return;
-    if(td.classList.contains('emp')) return; // sem dado no último mês
-    pesoEsperado+=pesoNum;
-    if(td.classList.contains('hit')) pesoRealizado+=pesoNum;
-  });
-  document.getElementById('lbl-peso-mes').textContent='Últ. mês';
-  document.getElementById('lbl-peso-mes2').textContent='Últ. mês';
-  const espFmt=pesoEsperado.toFixed(1).replace('.',',')+('%');
-  const realFmt=pesoRealizado.toFixed(1).replace('.',',')+('%');
-  document.getElementById('peso-esp-val').textContent=espFmt;
-  const pesoRealEl=document.getElementById('peso-real-val');
-  pesoRealEl.textContent=realFmt;
-  const pct=pesoEsperado>0?Math.round(pesoRealizado/pesoEsperado*100):0;
-  pesoRealEl.className='card-val '+(pct>=70?'cg':pct>=50?'cy':'cr');
-  document.getElementById('peso-esp-sub').textContent=espFmt;
-  document.getElementById('peso-real-detail').textContent=pct+'% do esperado';
 
 
   // Filtro global — filtra os dois blocos
