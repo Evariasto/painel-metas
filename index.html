@@ -988,27 +988,26 @@
 
   }); // fim forEach table
 
-  // --- LINHA DE TOTAIS GLOBAIS (apenas no último bloco) ---
-  const allTables = document.querySelectorAll('table');
-  const lastTable = allTables[allTables.length - 1];
-  if (lastTable) {
-    // Somar PESO e PESO ATING. de TODOS os blocos
-    let totalPeso = 0, totalAtingido = 0;
-    document.querySelectorAll('tbody tr.row-meta').forEach(metaRow => {
-      const pesoTxt = (metaRow.querySelector('.td-peso')?.textContent || '').trim();
-      const pesoNum = parseFloat(pesoTxt.replace('%','').replace(',','.'));
-      if (!isNaN(pesoNum)) totalPeso += pesoNum;
+  // --- TOTAL GERAL: somar os dois blocos e inserir no final do último bloco ---
+  let grandPeso = 0, grandAtingido = 0, grandLastTable = null, grandTotalCols = 0;
+  document.querySelectorAll('table').forEach(table => {
+    grandLastTable = table;
+    grandTotalCols = table.querySelector('thead tr')?.querySelectorAll('th').length || 20;
+    table.querySelectorAll('tbody tr.row-meta').forEach(metaRow => {
+      const p = parseFloat((metaRow.querySelector('.td-peso')?.textContent||'').replace('%','').replace(',','.'));
+      if (!isNaN(p)) grandPeso += p;
     });
-    document.querySelectorAll('tbody td.td-peso-ating').forEach(td => {
-      const v = parseFloat((td.textContent || '').replace('%','').replace(',','.'));
-      if (!isNaN(v)) totalAtingido += v;
+    table.querySelectorAll('tbody td.td-peso-ating').forEach(td => {
+      if (td.classList.contains('emp')) return;
+      const v = parseFloat((td.textContent||'').replace('%','').replace(',','.'));
+      if (!isNaN(v)) grandAtingido += v;
     });
+  });
 
-    const totalCols = lastTable.querySelector('thead tr')?.querySelectorAll('th').length || 20;
-    const tbody = lastTable.querySelector('tbody');
+  if (grandLastTable) {
     const tRow = document.createElement('tr');
     tRow.className = 'row-total';
-    const colsAfterPeso = totalCols - 4;
+    const colsAfterPeso = grandTotalCols - 4;
 
     const tdLbl = document.createElement('td');
     tdLbl.colSpan = 3; tdLbl.className = 'tl total-lbl';
@@ -1017,7 +1016,7 @@
 
     const tdPeso = document.createElement('td');
     tdPeso.className = 'td-ytd cy';
-    tdPeso.textContent = totalPeso.toFixed(1).replace('.',',') + '%';
+    tdPeso.textContent = grandPeso.toFixed(1).replace('.',',') + '%';
     tRow.appendChild(tdPeso);
 
     const midCols = colsAfterPeso - 3;
@@ -1027,8 +1026,8 @@
     }
 
     const tdAting = document.createElement('td');
-    tdAting.className = 'td-ytd ' + (totalAtingido >= totalPeso * 0.7 ? 'cg' : totalAtingido >= totalPeso * 0.5 ? 'cy' : 'cr');
-    tdAting.textContent = totalAtingido.toFixed(1).replace('.',',') + '%';
+    tdAting.className = 'td-ytd ' + (grandAtingido >= grandPeso * 0.7 ? 'cg' : grandAtingido >= grandPeso * 0.5 ? 'cy' : 'cr');
+    tdAting.textContent = grandAtingido.toFixed(1).replace('.',',') + '%';
     tRow.appendChild(tdAting);
 
     for (let i = 0; i < 2; i++) {
@@ -1036,7 +1035,7 @@
       tRow.appendChild(td);
     }
 
-    tbody.appendChild(tRow);
+    grandLastTable.querySelector('tbody').appendChild(tRow);
   }
 </script>
 </body>
