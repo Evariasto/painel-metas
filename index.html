@@ -59,14 +59,14 @@
   .card-sub { font-size: 11px; color: var(--text2); margin-top: 5px; }
   .card-info { font-size: 10px; color: var(--muted); margin-top: 7px; padding-top: 7px; border-top: 1px solid var(--bdr); line-height: 1.4; font-style: italic; }
   .card-full { grid-column: 1 / -1; }
-  .ofensor-list { list-style: none; margin: 10px 0 0; padding: 0; }
-  .ofensor-item { display: flex; align-items: center; gap: 10px; padding: 6px 0; border-bottom: 1px solid var(--bdr); font-size: 12px; }
-  .ofensor-item:last-child { border-bottom: none; }
-  .ofensor-rank { font-family: 'Bebas Neue'; font-size: 16px; color: var(--muted); min-width: 20px; text-align: center; }
-  .ofensor-peso { font-family: 'Bebas Neue'; font-size: 14px; color: var(--gold-lt); min-width: 38px; text-align: right; }
-  .ofensor-obj { flex: 1; color: var(--text1); }
-  .ofensor-obj small { display: block; color: var(--muted); font-size: 10px; }
-  .ofensor-area { font-size: 9px; font-weight: 700; letter-spacing: .6px; text-transform: uppercase; padding: 2px 6px; border-radius: 2px; white-space: nowrap; }
+  .filter-bar { display: flex; gap: 8px; margin-bottom: 14px; flex-wrap: wrap; }
+  .filter-btn { padding: 5px 14px; border-radius: 2px; border: 1px solid var(--bdr2); background: var(--s2); color: var(--text2); font-size: 10px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; cursor: pointer; transition: all .15s; }
+  .filter-btn:hover { border-color: var(--gold); color: var(--gold); }
+  .filter-btn.active-all { border-color: var(--gold); background: var(--gold); color: #1a1000; }
+  .filter-btn.active-r { border-color: var(--red); background: var(--red); color: #fff; }
+  .filter-btn.active-g { border-color: var(--green); background: var(--green); color: #0a1f10; }
+  .filter-btn.active-y { border-color: var(--gold); background: var(--gold); color: #1a1000; }
+  tr.row-hidden { display: none; }
   .cg { color: var(--green); } .cr { color: var(--red); } .cy { color: var(--gold); }
 
   /* SECTION */
@@ -195,6 +195,12 @@
     <div class="sec-hdr">
       <h2>Metas de Gestão — Bloco 3</h2>
       <span class="sec-badge">3.1 — 3.24</span>
+    </div>
+    <div class="filter-bar" data-table="0">
+      <button class="filter-btn active-all" data-filter="all">Todos</button>
+      <button class="filter-btn" data-filter="r">● Abaixo</button>
+      <button class="filter-btn" data-filter="g">● Atingido</button>
+      <button class="filter-btn" data-filter="y">● Atenção</button>
     </div>
     <div class="twrap">
       <table>
@@ -686,6 +692,12 @@
       <h2>Metas de Projetos — Bloco 4</h2>
       <span class="sec-badge">4.1 — 4.6</span>
     </div>
+    <div class="filter-bar" data-table="1">
+      <button class="filter-btn active-all" data-filter="all">Todos</button>
+      <button class="filter-btn" data-filter="r">● Abaixo</button>
+      <button class="filter-btn" data-filter="g">● Atingido</button>
+      <button class="filter-btn" data-filter="y">● Atenção</button>
+    </div>
     <div class="twrap">
       <table>
         <colgroup>
@@ -828,15 +840,6 @@
     </div>
   </div>
 
-  <!-- METAS OFENSORAS -->
-  <div class="sec" style="margin-top:22px">
-    <div class="sec-title">Metas Mais Ofensoras — Abaixo do Esperado (YTD)</div>
-    <div style="background:var(--s1);border:1px solid var(--bdr);border-radius:3px;padding:16px 18px;">
-      <ul class="ofensor-list" id="ofensor-list">
-        <li style="color:var(--muted);font-size:11px">Calculando…</li>
-      </ul>
-    </div>
-  </div>
 
 </div><!-- /container -->
 
@@ -905,34 +908,32 @@
   maiEl.className='card-val '+(maiPct>=70?'cg':maiPct>=50?'cy':'cr');
   document.getElementById('mai-count').textContent=maiHit+' de '+maiTotal+' metas atingidas';
 
-  // Metas mais ofensoras (Abaixo, ordenadas por PESO desc)
-  const ofensores = [];
-  document.querySelectorAll('tbody tr.row-meta').forEach(tr => {
-    const pill = tr.querySelector('.pill');
-    if (!pill || !pill.textContent.includes('Abaixo')) return;
-    const objNode = tr.querySelector('.td-obj');
-    const obj = objNode ? objNode.childNodes[0].textContent.trim() : '—';
-    const sub = objNode ? (objNode.querySelector('small')?.textContent.trim() || '') : '';
-    const pesoText = tr.querySelector('.td-peso')?.textContent.trim() || '0%';
-    const peso = parseFloat(pesoText.replace(',','.')) || 0;
-    const areaEl = tr.querySelector('.area-tag');
-    const area = areaEl ? areaEl.textContent.trim() : '';
-    const areaClass = areaEl ? [...areaEl.classList].find(c => c !== 'area-tag') || '' : '';
-    ofensores.push({ obj, sub, peso, pesoText, area, areaClass });
+
+  // Filtros de status por bloco
+  const tables = document.querySelectorAll('table');
+  document.querySelectorAll('.filter-bar').forEach(bar => {
+    const tIdx = parseInt(bar.dataset.table);
+    const table = tables[tIdx];
+    bar.querySelectorAll('.filter-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        // atualiza botão ativo
+        bar.querySelectorAll('.filter-btn').forEach(b => b.className = 'filter-btn');
+        const f = btn.dataset.filter;
+        btn.classList.add('filter-btn', f === 'all' ? 'active-all' : f === 'r' ? 'active-r' : f === 'g' ? 'active-g' : 'active-y');
+        // filtra linhas
+        table.querySelectorAll('tbody tr.row-meta').forEach(metaRow => {
+          const realRow = metaRow.nextElementSibling;
+          const pill = metaRow.querySelector('.pill');
+          const show = f === 'all'
+            || (f === 'r' && pill?.textContent.includes('Abaixo'))
+            || (f === 'g' && pill?.textContent.includes('Atingido'))
+            || (f === 'y' && pill?.textContent.includes('Atenção'));
+          metaRow.classList.toggle('row-hidden', !show);
+          if (realRow?.classList.contains('row-real')) realRow.classList.toggle('row-hidden', !show);
+        });
+      });
+    });
   });
-  ofensores.sort((a,b) => b.peso - a.peso);
-  const ul = document.getElementById('ofensor-list');
-  if (ofensores.length === 0) {
-    ul.innerHTML = '<li style="color:var(--green);font-size:11px">Nenhuma meta abaixo do esperado.</li>';
-  } else {
-    ul.innerHTML = ofensores.map((o, i) => `
-      <li class="ofensor-item">
-        <span class="ofensor-rank">${i+1}</span>
-        <span class="ofensor-peso">${o.pesoText}</span>
-        <span class="ofensor-obj">${o.obj}<small>${o.sub}</small></span>
-        <span class="ofensor-area ${o.areaClass}">${o.area}</span>
-      </li>`).join('');
-  }
 </script>
 </body>
 </html>
