@@ -188,6 +188,18 @@
       <div class="card-sub">Esperado: 100% &nbsp;·&nbsp; <span id="ytd-count">—</span></div>
       <div class="card-info">% de metas com status Atingido no acumulado do ano, considerando todas as metas com realizado informado até o período.</div>
     </div>
+    <div class="card">
+      <div class="card-lbl">% Peso Esperado — <span id="lbl-peso-mes">—</span>/26</div>
+      <div class="card-val cy" id="peso-esp-val">—</div>
+      <div class="card-sub">Metas com dados no mês</div>
+      <div class="card-info">Soma do peso das metas que tinham realizado informado no último mês fechado — representa o total de peso em jogo.</div>
+    </div>
+    <div class="card">
+      <div class="card-lbl">% Peso Realizado — <span id="lbl-peso-mes2">—</span>/26</div>
+      <div class="card-val" id="peso-real-val">—</div>
+      <div class="card-sub">Esperado: <span id="peso-esp-sub">—</span> &nbsp;·&nbsp; <span id="peso-real-detail">—</span></div>
+      <div class="card-info">Soma do peso das metas efetivamente atingidas no último mês fechado.</div>
+    </div>
   </div>
 
   <!-- FILTRO GLOBAL -->
@@ -783,6 +795,39 @@
   maiEl.textContent=maiPct+'%';
   maiEl.className='card-val '+(maiPct>=70?'cg':maiPct>=50?'cy':'cr');
   document.getElementById('mai-count').textContent=maiHit+' de '+maiTotal+' metas atingidas';
+
+  // KPI Peso Esperado e Peso Realizado no último mês
+  let pesoEsperado=0, pesoRealizado=0;
+  document.querySelectorAll('table').forEach(table=>{
+    let ci=-1;
+    table.querySelectorAll('thead th').forEach((th,i)=>{ if(th.textContent.trim()===mesAnterior) ci=i; });
+    if(ci<0) return;
+    table.querySelectorAll('tbody tr.row-meta').forEach(metaRow=>{
+      const realRow=metaRow.nextElementSibling;
+      if(!realRow?.classList.contains('row-real')) return;
+      // Pegar peso da meta (ex: "5,0%" → 5.0)
+      const pesoTxt=(metaRow.querySelector('.td-peso')?.textContent||'').trim();
+      const pesoNum=parseFloat(pesoTxt.replace('%','').replace(',','.'));
+      if(isNaN(pesoNum)||pesoNum===0) return;
+      // Verificar se tem dado no mês
+      const realCells=realRow.querySelectorAll('td');
+      const td=realCells[ci-4];
+      if(!td||td.classList.contains('emp')) return;
+      pesoEsperado+=pesoNum;
+      if(td.classList.contains('hit')) pesoRealizado+=pesoNum;
+    });
+  });
+  document.getElementById('lbl-peso-mes').textContent=mesAnterior;
+  document.getElementById('lbl-peso-mes2').textContent=mesAnterior;
+  const espFmt=pesoEsperado.toFixed(1).replace('.',',')+('%');
+  const realFmt=pesoRealizado.toFixed(1).replace('.',',')+('%');
+  document.getElementById('peso-esp-val').textContent=espFmt;
+  const pesoRealEl=document.getElementById('peso-real-val');
+  pesoRealEl.textContent=realFmt;
+  const pct=pesoEsperado>0?Math.round(pesoRealizado/pesoEsperado*100):0;
+  pesoRealEl.className='card-val '+(pct>=70?'cg':pct>=50?'cy':'cr');
+  document.getElementById('peso-esp-sub').textContent=espFmt;
+  document.getElementById('peso-real-detail').textContent=pct+'% do esperado';
 
 
   // Filtro global — filtra os dois blocos
