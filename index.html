@@ -221,7 +221,7 @@
             <th></th>
             <th>JAN</th><th>FEV</th><th>MAR</th><th>ABR</th><th>MAI</th>
             <th>JUN</th><th>JUL</th><th>AGO</th><th>SET</th><th>OUT</th><th>NOV</th><th>DEZ</th>
-            <th class="th-ytd">YTD / FY</th>
+            <th class="th-ytd">FY</th>
             <th class="th-left">Status</th>
           </tr>
         </thead>
@@ -615,7 +615,7 @@
             <th></th>
             <th>JAN</th><th>FEV</th><th>MAR</th><th>ABR</th><th>MAI</th>
             <th>JUN</th><th>JUL</th><th>AGO</th><th>SET</th><th>OUT</th><th>NOV</th><th>DEZ</th>
-            <th class="th-ytd">YTD / FY</th>
+            <th class="th-ytd">FY</th>
             <th class="th-left">Status</th>
           </tr>
         </thead>
@@ -846,7 +846,7 @@
   document.querySelectorAll('table').forEach(table => {
     // Cabeçalho: insere META ACUM. e REAL ACUM. antes do th-ytd
     table.querySelectorAll('thead th.th-ytd').forEach(th => {
-      ['META ACUM.','REAL ACUM.'].forEach(label => {
+      ['YTD','REAL ACUM.'].forEach(label => {
         const newTh = document.createElement('th');
         newTh.className = 'th-ytd';
         newTh.textContent = label;
