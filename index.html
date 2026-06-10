@@ -798,29 +798,23 @@
   maiEl.className='card-val '+(maiPct>=70?'cg':maiPct>=50?'cy':'cr');
   document.getElementById('mai-count').textContent=maiHit+' de '+maiTotal+' metas atingidas';
 
-  // KPI Peso Esperado e Peso Realizado no último mês
+  // KPI Peso Esperado e Peso Realizado — usa célula td-peso-ating (mesmo critério do TOTAL DO BLOCO)
   let pesoEsperado=0, pesoRealizado=0;
-  document.querySelectorAll('table').forEach(table=>{
-    let ci=-1;
-    table.querySelectorAll('thead th').forEach((th,i)=>{ if(th.textContent.trim()===mesAnterior) ci=i; });
-    if(ci<0) return;
-    table.querySelectorAll('tbody tr.row-meta').forEach(metaRow=>{
-      const realRow=metaRow.nextElementSibling;
-      if(!realRow?.classList.contains('row-real')) return;
-      // Pegar peso da meta (ex: "5,0%" → 5.0)
-      const pesoTxt=(metaRow.querySelector('.td-peso')?.textContent||'').trim();
-      const pesoNum=parseFloat(pesoTxt.replace('%','').replace(',','.'));
-      if(isNaN(pesoNum)||pesoNum===0) return;
-      // Verificar se tem dado no mês
-      const realCells=realRow.querySelectorAll('td');
-      const td=realCells[ci-4];
-      if(!td||td.classList.contains('emp')) return;
-      pesoEsperado+=pesoNum;
-      if(td.classList.contains('hit')) pesoRealizado+=pesoNum;
-    });
+  document.querySelectorAll('tbody td.td-peso-ating').forEach(td=>{
+    // Buscar o peso da meta correspondente (linha row-meta do mesmo par)
+    const realRow=td.closest('tr.row-real');
+    if(!realRow) return;
+    const metaRow=realRow.previousElementSibling;
+    if(!metaRow?.classList.contains('row-meta')) return;
+    const pesoTxt=(metaRow.querySelector('.td-peso')?.textContent||'').trim();
+    const pesoNum=parseFloat(pesoTxt.replace('%','').replace(',','.'));
+    if(isNaN(pesoNum)||pesoNum===0) return;
+    if(td.classList.contains('emp')) return; // sem dado no último mês
+    pesoEsperado+=pesoNum;
+    if(td.classList.contains('hit')) pesoRealizado+=pesoNum;
   });
-  document.getElementById('lbl-peso-mes').textContent=mesAnterior;
-  document.getElementById('lbl-peso-mes2').textContent=mesAnterior;
+  document.getElementById('lbl-peso-mes').textContent='Últ. mês';
+  document.getElementById('lbl-peso-mes2').textContent='Últ. mês';
   const espFmt=pesoEsperado.toFixed(1).replace('.',',')+('%');
   const realFmt=pesoRealizado.toFixed(1).replace('.',',')+('%');
   document.getElementById('peso-esp-val').textContent=espFmt;
