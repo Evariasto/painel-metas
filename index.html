@@ -941,8 +941,14 @@
     sample = sample.trim();
     const val = isMonetary(sample) ? sum : sum / count; // soma p/ R$, média p/ resto
     if (/^R\$/.test(sample)) return 'R$' + val.toFixed(1).replace('.',',') + 'M';
-    if (/%$/.test(sample)) return val.toFixed(1).replace('.',',') + '%';
-    return val % 1 === 0 ? String(Math.round(val)) : val.toFixed(2).replace('.',',');
+    if (/%$/.test(sample)) {
+      // mesma quantidade de casas decimais do sample
+      const dec = (sample.replace('%','').split(',')[1] || '').length;
+      return val.toFixed(dec).replace('.',',') + '%';
+    }
+    // número simples: mesma quantidade de casas do sample
+    const dec = (sample.split(',')[1] || '').length;
+    return val.toFixed(dec).replace('.',',');
   }
 
   // Número de meses fechados (JAN=1 … MAI=5)
@@ -1004,23 +1010,24 @@
         refTd.parentNode.insertBefore(td2, refTd);
       };
 
-      // Linha META: META ACUM | REAL ACUM (vazio)
+      // Linha META: inserir na ordem inversa (insertBefore empilha ao contrário)
+      // ordem final desejada: [REAL ACUM.=—] [META ACUM.=metaAccum]
       const mTd1 = document.createElement('td');
       mTd1.className = 'td-ytd neu'; mTd1.textContent = metaAccum;
-      metaYtdTd.parentNode.insertBefore(mTd1, metaYtdTd);
+      metaYtdTd.parentNode.insertBefore(mTd1, metaYtdTd); // inserido por último → posição 2
       const mTd2 = document.createElement('td');
       mTd2.className = 'td-ytd emp'; mTd2.textContent = '—';
-      metaYtdTd.parentNode.insertBefore(mTd2, metaYtdTd);
+      metaYtdTd.parentNode.insertBefore(mTd2, mTd1); // inserido antes do mTd1 → posição 1
 
-      // Linha REAL: META ACUM (referência) | REAL ACUM
+      // Linha REAL: ordem final: [REAL ACUM.=realAccum] [META ACUM.=metaAccum]
       if (realRow?.classList.contains('row-real') && realYtdTd) {
         const rTd1 = document.createElement('td');
         rTd1.className = 'td-ytd neu'; rTd1.textContent = metaAccum;
-        realYtdTd.parentNode.insertBefore(rTd1, realYtdTd);
+        realYtdTd.parentNode.insertBefore(rTd1, realYtdTd); // posição 2
         const rTd2 = document.createElement('td');
         rTd2.className = 'td-ytd ' + (realCount > 0 ? (realSum >= metaSum ? 'hit' : 'miss') : 'emp');
         rTd2.textContent = realAccum;
-        realYtdTd.parentNode.insertBefore(rTd2, realYtdTd);
+        realYtdTd.parentNode.insertBefore(rTd2, rTd1); // posição 1
       }
     });
   });
