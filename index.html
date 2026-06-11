@@ -127,12 +127,17 @@
   .total-bar-item { display: flex; align-items: center; gap: 8px; font-size: 11px; font-weight: 700; }
   .total-bar-item span.lbl { color: #ffffff; font-size: 10px; letter-spacing: 0.5px; text-transform: uppercase; }
   .total-bar-item span.val { font-size: 13px; font-weight: 700; }
-  .filter-btn { padding: 5px 14px; border-radius: 2px; border: 1px solid var(--bdr2); background: var(--s2); color: var(--text2); font-size: 10px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; cursor: pointer; transition: all .15s; }
+  .filter-btn { padding: 5px 14px; border-radius: 2px; border: 1px solid var(--bdr2); background: var(--s2); color: var(--text); font-size: 10px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; cursor: pointer; transition: all .15s; }
   .filter-btn:hover { border-color: var(--gold); color: var(--gold); }
   .filter-btn.active-all { border-color: var(--gold); background: var(--gold); color: #1a1000; }
-  .filter-btn.active-r { border-color: var(--red); background: var(--red); color: #fff; }
-  .filter-btn.active-g { border-color: var(--green); background: var(--green); color: #0a1f10; }
-  .filter-btn.active-y { border-color: var(--gold); background: var(--gold); color: #1a1000; }
+  .filter-btn.active-r { border-color: #e05060; background: #1f0305; color: #e05060; }
+  .filter-btn.active-g { border-color: #4db870; background: #0a1f10; color: #4db870; }
+  .filter-btn.active-y { border-color: var(--gold); background: #1c1500; color: var(--gold); }
+  body.light-mode .filter-btn { background: var(--s2); border-color: var(--bdr2); color: #333; }
+  body.light-mode .filter-btn.active-all { background: var(--gold); border-color: var(--gold); color: #1a1000; }
+  body.light-mode .filter-btn.active-r { background: #fdd8db; border-color: #9a0f18; color: #9a0f18; }
+  body.light-mode .filter-btn.active-g { background: #d4f5e2; border-color: #1a7a3a; color: #1a7a3a; }
+  body.light-mode .filter-btn.active-y { background: #fdf3d4; border-color: #7a5a00; color: #7a5a00; }
   tr.row-hidden { display: none; }
   .cg { color: var(--green); } .cr { color: var(--red); } .cy { color: var(--gold); }
 
