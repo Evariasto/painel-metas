@@ -25,6 +25,30 @@
     --text:   #f0ece4;
     --text2:  #9a9080;
   }
+  body.light-mode {
+    --bg:   #f4f1eb;
+    --s1:   #ffffff;
+    --s2:   #ede9e0;
+    --s3:   #e0dbd0;
+    --bdr:  #d0c9bc;
+    --bdr2: #bdb6a8;
+    --muted:#888070;
+    --text: #1a1a1a;
+    --text2:#5a5040;
+  }
+  body.light-mode .header { background: linear-gradient(135deg,#2a1e00 0%,#1a1000 60%); }
+  body.light-mode .hkpi, body.light-mode .row-meta td, body.light-mode .row-real td { color: var(--text); }
+  body.light-mode .col-id, body.light-mode .col-obj { background: var(--s1); }
+  body.light-mode .row-real .col-id, body.light-mode .row-real .col-obj { background: var(--bg); }
+  body.light-mode thead tr { background: var(--s3); }
+  body.light-mode .twrap { background: var(--s1); }
+  body.light-mode .card { background: var(--s1); }
+  body.light-mode .footer { background: var(--bg); }
+
+  /* BOTÃO THEME */
+  .theme-btn { margin-left: 16px; background: transparent; border: 1px solid var(--gold-dk); border-radius: 20px; color: var(--gold); font-size: 11px; font-weight: 700; letter-spacing: 1px; padding: 4px 12px; cursor: pointer; transition: all .2s; white-space: nowrap; align-self: center; }
+  .theme-btn:hover { background: var(--gold); color: #1a1000; }
+
   body { background: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; font-size: 13px; }
 
   /* HEADER */
@@ -161,6 +185,7 @@
     <p>Operações e Qualidade &nbsp;·&nbsp; Atualizado até Mai/2026</p>
   </div>
   <div style="margin-left:auto;display:flex;gap:10px;align-items:center;padding:0 8px;">
+    <button class="theme-btn" id="theme-toggle" onclick="toggleTheme()">☀ CLARO</button>
     <div class="total-bar" id="total-bar-global" style="padding:10px 18px;">
       <span class="total-bar-lbl">MÊS</span>
       <div class="total-bar-item"><span class="lbl">REF.</span><span class="val cy" id="grand-mes-lbl">—</span></div>
@@ -1081,6 +1106,12 @@
     atingLbl.textContent = grandAtingido.toFixed(1).replace('.',',') + '%';
     const grandPctEl = document.getElementById('grand-ating-pct');
     if (grandPctEl && grandPeso > 0) grandPctEl.textContent = '(' + Math.round(grandAtingido / grandPeso * 100) + '% do total)';
+  }
+
+  // THEME TOGGLE
+  function toggleTheme() {
+    const isLight = document.body.classList.toggle('light-mode');
+    document.getElementById('theme-toggle').textContent = isLight ? '🌙 DARK' : '☀ CLARO';
   }
 </script>
 </body>
