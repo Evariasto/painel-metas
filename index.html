@@ -796,10 +796,10 @@
     else if(tx.includes('Abaixo')){r++;t++;}
     else if(tx.includes('Atenção')){y++;t++;}
   });
-  document.getElementById('cnt-g').textContent=g;
-  document.getElementById('cnt-r').textContent=r;
-  document.getElementById('cnt-y').textContent=y;
-  document.getElementById('pct-ytd').textContent=Math.round(g/totalMetas*100)+'%';
+  if(document.getElementById('cnt-g')) document.getElementById('cnt-g').textContent=g;
+  if(document.getElementById('cnt-r')) document.getElementById('cnt-r').textContent=r;
+  if(document.getElementById('cnt-y')) document.getElementById('cnt-y').textContent=y;
+  if(document.getElementById('pct-ytd')) document.getElementById('pct-ytd').textContent=Math.round(g/totalMetas*100)+'%';
 
   // KPI YTD acumulado (cards)
   const ytdPct = Math.round(g/totalMetas*100);
