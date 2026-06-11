@@ -205,6 +205,7 @@
     <button class="filter-btn" data-filter="y">● Atenção</button>
     <div class="total-bar" id="total-bar-global">
       <span class="total-bar-lbl">TOTAL GERAL</span>
+      <div class="total-bar-item"><span class="lbl">MÊS REF.</span><span class="val cy" id="grand-mes-lbl">—</span></div>
       <div class="total-bar-item"><span class="lbl">PESO</span><span class="val cy" id="grand-peso-lbl">—</span></div>
       <div class="total-bar-item"><span class="lbl">PESO ATING.</span><span class="val" id="grand-ating-lbl">—</span></div>
     </div>
@@ -988,7 +989,33 @@
     });
   });
 
+  // Detectar último mês fechado (última coluna de mês com dados reais)
+  const monthNames = ['JAN','FEV','MAR','ABR','MAI','JUN','JUL','AGO','SET','OUT','NOV','DEZ'];
+  let lastMonthIdx = -1;
+  document.querySelectorAll('table').forEach(table => {
+    const headers = [...table.querySelectorAll('thead th')].map(th => th.textContent.trim());
+    table.querySelectorAll('tbody tr.row-real').forEach(realRow => {
+      const cells = [...realRow.querySelectorAll('td')];
+      monthNames.forEach((mn, mi) => {
+        const hIdx = headers.indexOf(mn);
+        if (hIdx < 0) return;
+        // offset: header index minus leading cols (ID=rowspan, Obj=rowspan, Area=rowspan, Peso=rowspan = 4 cols not in REAL row)
+        // REAL row starts at tipo cell (index 0 in row)
+        // find cell by matching header position - leading rowspan cols (4)
+        const cellIdx = hIdx - 4;
+        if (cellIdx < 0 || cellIdx >= cells.length) return;
+        const txt = (cells[cellIdx]?.textContent || '').trim();
+        if (txt && txt !== '—' && txt !== '-' && txt !== '') {
+          if (mi > lastMonthIdx) lastMonthIdx = mi;
+        }
+      });
+    });
+  });
+
   // Preencher barra de TOTAL GERAL no topo (acima das tabelas)
+  const mesLbl = document.getElementById('grand-mes-lbl');
+  if (mesLbl && lastMonthIdx >= 0) mesLbl.textContent = monthNames[lastMonthIdx] + '/26';
+
   const pesoLbl = document.getElementById('grand-peso-lbl');
   const atingLbl = document.getElementById('grand-ating-lbl');
   if (pesoLbl) pesoLbl.textContent = grandPeso.toFixed(1).replace('.',',') + '%';
