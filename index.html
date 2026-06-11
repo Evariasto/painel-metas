@@ -60,7 +60,7 @@
   .card-info { font-size: 10px; color: var(--muted); margin-top: 7px; padding-top: 7px; border-top: 1px solid var(--bdr); line-height: 1.4; font-style: italic; }
   .card-full { grid-column: 1 / -1; }
   .filter-bar { display: flex; gap: 8px; margin-bottom: 14px; flex-wrap: wrap; align-items: center; }
-  .total-bar { display: flex; align-items: center; gap: 0; background: #0e0e0e; border: 1px solid var(--gold-dk); border-radius: 3px; margin-left: auto; padding: 0 16px; height: 32px; gap: 24px; }
+  .total-bar { display: flex; align-items: center; background: #0e0e0e; border: 1px solid var(--gold-dk); border-radius: 3px; padding: 6px 12px; gap: 16px; flex-wrap: wrap; }
   .total-bar-lbl { font-family: 'Bebas Neue', sans-serif; letter-spacing: 2px; font-size: 13px; color: var(--gold); }
   .total-bar-item { display: flex; align-items: center; gap: 8px; font-size: 11px; font-weight: 700; }
   .total-bar-item span.lbl { color: var(--text2); font-size: 10px; letter-spacing: 0.5px; text-transform: uppercase; }
@@ -189,12 +189,24 @@
       <div class="card-val" id="mai-pct">—</div>
       <div class="card-sub">Esperado: 100% &nbsp;·&nbsp; <span id="mai-count">—</span></div>
       <div class="card-info">% de metas que atingiram o resultado no último mês fechado, sobre o total de indicadores com realizado informado no período.</div>
+      <div class="total-bar" id="total-bar-global" style="margin-top:10px;width:100%;">
+        <span class="total-bar-lbl">MÊS</span>
+        <div class="total-bar-item"><span class="lbl">REF.</span><span class="val cy" id="grand-mes-lbl">—</span></div>
+        <div class="total-bar-item"><span class="lbl">PESO</span><span class="val cy" id="grand-peso-lbl">—</span></div>
+        <div class="total-bar-item"><span class="lbl">PESO ATING.</span><span class="val" id="grand-ating-lbl">—</span> <span id="grand-ating-pct" style="font-size:11px;font-weight:700;color:var(--gold);margin-left:4px;"></span></div>
+      </div>
     </div>
     <div class="card">
       <div class="card-lbl">Atingimento YTD — Acumulado Ano</div>
       <div class="card-val" id="ytd-pct2">—</div>
       <div class="card-sub">Esperado: 100% &nbsp;·&nbsp; <span id="ytd-count">—</span></div>
       <div class="card-info">% de metas com status Atingido no acumulado do ano, considerando todas as metas com realizado informado até o período.</div>
+      <div class="total-bar" id="total-bar-ytd" style="margin-top:10px;width:100%;">
+        <span class="total-bar-lbl">YTD</span>
+        <div class="total-bar-item"><span class="lbl">JAN–<span id="ytd-mes-fim">—</span></span></div>
+        <div class="total-bar-item"><span class="lbl">PESO</span><span class="val cy" id="ytd-peso-lbl">—</span></div>
+        <div class="total-bar-item"><span class="lbl">PESO ATING.</span><span class="val" id="ytd-ating-lbl">—</span> <span id="ytd-ating-pct" style="font-size:11px;font-weight:700;color:var(--gold);margin-left:4px;"></span></div>
+      </div>
     </div>
   </div>
 
@@ -204,18 +216,6 @@
     <button class="filter-btn" data-filter="r">● Abaixo</button>
     <button class="filter-btn" data-filter="g">● Atingido</button>
     <button class="filter-btn" data-filter="y">● Atenção</button>
-    <div class="total-bar" id="total-bar-global">
-      <span class="total-bar-lbl">TOTAL GERAL</span>
-      <div class="total-bar-item"><span class="lbl">MÊS REF.</span><span class="val cy" id="grand-mes-lbl">—</span></div>
-      <div class="total-bar-item"><span class="lbl">PESO</span><span class="val cy" id="grand-peso-lbl">—</span></div>
-      <div class="total-bar-item"><span class="lbl">PESO ATING.</span><span class="val" id="grand-ating-lbl">—</span> <span id="grand-ating-pct" style="font-size:11px;font-weight:700;color:var(--gold);margin-left:4px;"></span></div>
-    </div>
-    <div class="total-bar" id="total-bar-ytd" style="margin-left:8px;">
-      <span class="total-bar-lbl">YTD</span>
-      <div class="total-bar-item"><span class="lbl">JAN–<span id="ytd-mes-fim">—</span></span></div>
-      <div class="total-bar-item"><span class="lbl">PESO</span><span class="val cy" id="ytd-peso-lbl">—</span></div>
-      <div class="total-bar-item"><span class="lbl">PESO ATING.</span><span class="val" id="ytd-ating-lbl">—</span> <span id="ytd-ating-pct" style="font-size:11px;font-weight:700;color:var(--gold);margin-left:4px;"></span></div>
-    </div>
   </div>
 
   <!-- BLOCO 3 -->
