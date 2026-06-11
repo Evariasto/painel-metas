@@ -208,13 +208,13 @@
       <span class="total-bar-lbl">TOTAL GERAL</span>
       <div class="total-bar-item"><span class="lbl">MÊS REF.</span><span class="val cy" id="grand-mes-lbl">—</span></div>
       <div class="total-bar-item"><span class="lbl">PESO</span><span class="val cy" id="grand-peso-lbl">—</span></div>
-      <div class="total-bar-item"><span class="lbl">PESO ATING.</span><span class="val" id="grand-ating-lbl">—</span></div>
+      <div class="total-bar-item"><span class="lbl">PESO ATING.</span><span class="val" id="grand-ating-lbl">—</span> <span id="grand-ating-pct" style="font-size:11px;font-weight:700;color:var(--gold);margin-left:4px;"></span></div>
     </div>
     <div class="total-bar" id="total-bar-ytd" style="margin-left:8px;">
       <span class="total-bar-lbl">YTD</span>
       <div class="total-bar-item"><span class="lbl">JAN–<span id="ytd-mes-fim">—</span></span></div>
       <div class="total-bar-item"><span class="lbl">PESO</span><span class="val cy" id="ytd-peso-lbl">—</span></div>
-      <div class="total-bar-item"><span class="lbl">PESO ATING.</span><span class="val" id="ytd-ating-lbl">—</span></div>
+      <div class="total-bar-item"><span class="lbl">PESO ATING.</span><span class="val" id="ytd-ating-lbl">—</span> <span id="ytd-ating-pct" style="font-size:11px;font-weight:700;color:var(--gold);margin-left:4px;"></span></div>
     </div>
   </div>
 
@@ -1072,6 +1072,8 @@
     const cls = grandAtingidoYtd >= grandPeso * 0.7 ? 'cg' : grandAtingidoYtd >= grandPeso * 0.5 ? 'cy' : 'cr';
     ytdAtingLbl.className = 'val ' + cls;
     ytdAtingLbl.textContent = grandAtingidoYtd.toFixed(1).replace('.',',') + '%';
+    const ytdPctEl = document.getElementById('ytd-ating-pct');
+    if (ytdPctEl && grandPeso > 0) ytdPctEl.textContent = '(' + Math.round(grandAtingidoYtd / grandPeso * 100) + '% do total)';
   }
 
   const pesoLbl = document.getElementById('grand-peso-lbl');
@@ -1081,6 +1083,8 @@
     const cls = grandAtingido >= grandPeso * 0.7 ? 'cg' : grandAtingido >= grandPeso * 0.5 ? 'cy' : 'cr';
     atingLbl.className = 'val ' + cls;
     atingLbl.textContent = grandAtingido.toFixed(1).replace('.',',') + '%';
+    const grandPctEl = document.getElementById('grand-ating-pct');
+    if (grandPctEl && grandPeso > 0) grandPctEl.textContent = '(' + Math.round(grandAtingido / grandPeso * 100) + '% do total)';
   }
 </script>
 </body>
