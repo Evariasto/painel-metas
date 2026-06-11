@@ -792,6 +792,7 @@
 
   // KPI pills YTD
   const pills = document.querySelectorAll('tbody .pill');
+  const totalMetas = document.querySelectorAll('tbody tr.row-meta').length;
   let g=0,r=0,y=0,t=0;
   pills.forEach(p=>{
     const tx=p.textContent.trim();
@@ -802,17 +803,17 @@
   document.getElementById('cnt-g').textContent=g;
   document.getElementById('cnt-r').textContent=r;
   document.getElementById('cnt-y').textContent=y;
-  document.getElementById('pct-ytd').textContent=Math.round(g/t*100)+'%';
+  document.getElementById('pct-ytd').textContent=Math.round(g/totalMetas*100)+'%';
 
   // KPI YTD acumulado (cards)
-  const ytdPct = Math.round(g/t*100);
+  const ytdPct = Math.round(g/totalMetas*100);
   const ytdEl = document.getElementById('ytd-pct2');
   ytdEl.textContent = ytdPct+'%';
   ytdEl.className = 'card-val '+(ytdPct>=70?'cg':ytdPct>=50?'cy':'cr');
-  document.getElementById('ytd-count').textContent = g+' de '+t+' metas atingidas';
+  document.getElementById('ytd-count').textContent = g+' de '+totalMetas+' metas atingidas';
 
   // KPI mês anterior (MAI)
-  let maiHit=0, maiTotal=0;
+  let maiHit=0, maiTotal=0, maiGrandTotal=0;
   document.querySelectorAll('table').forEach(table=>{
     let ci=-1;
     table.querySelectorAll('thead th').forEach((th,i)=>{
@@ -820,6 +821,7 @@
     });
     if(ci<0) return;
     table.querySelectorAll('tbody tr.row-real').forEach(tr=>{
+      maiGrandTotal++; // conta todas as metas
       const td=tr.querySelectorAll('td')[ci-4];
       if(td && !td.classList.contains('emp')){
         maiTotal++;
@@ -828,11 +830,11 @@
     });
   });
   document.getElementById('lbl-mes').textContent=mesAnterior;
-  const maiPct=maiTotal>0?Math.round(maiHit/maiTotal*100):0;
+  const maiPct=maiGrandTotal>0?Math.round(maiHit/maiGrandTotal*100):0;
   const maiEl=document.getElementById('mai-pct');
   maiEl.textContent=maiPct+'%';
   maiEl.className='card-val '+(maiPct>=70?'cg':maiPct>=50?'cy':'cr');
-  document.getElementById('mai-count').textContent=maiHit+' de '+maiTotal+' metas atingidas';
+  document.getElementById('mai-count').textContent=maiHit+' de '+maiGrandTotal+' metas atingidas';
 
 
 
