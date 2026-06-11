@@ -160,23 +160,53 @@
     <h1>Gestão de Metas 2026</h1>
     <p>Operações e Qualidade &nbsp;·&nbsp; Atualizado até Mai/2026</p>
   </div>
+  <div class="hkpis">
+    <div class="hkpi"><span class="hkpi-val cy" id="pct-ytd">—</span><small>% YTD Atingidas</small></div>
+    <div class="hkpi"><span class="hkpi-val" style="color:var(--green)" id="cnt-g">—</span><small>No Verde</small></div>
+    <div class="hkpi"><span class="hkpi-val" style="color:var(--red)" id="cnt-r">—</span><small>No Vermelho</small></div>
+    <div class="hkpi"><span class="hkpi-val" style="color:var(--gold-lt)" id="cnt-y">—</span><small>Em Atenção</small></div>
+  </div>
 </div>
 
 <div class="container">
 
-  <!-- SUMÁRIO TOPO -->
-  <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:18px;">
-    <div class="total-bar" id="total-bar-global" style="padding:14px 20px;">
-      <span class="total-bar-lbl" style="font-size:15px;">MÊS</span>
-      <div class="total-bar-item"><span class="lbl">REF.</span><span class="val cy" id="grand-mes-lbl" style="font-size:15px;">—</span></div>
-      <div class="total-bar-item"><span class="lbl">PESO</span><span class="val cy" id="grand-peso-lbl" style="font-size:15px;">—</span></div>
-      <div class="total-bar-item"><span class="lbl">PESO ATING.</span><span class="val" id="grand-ating-lbl" style="font-size:15px;">—</span> <span id="grand-ating-pct" style="font-size:12px;font-weight:700;color:var(--gold);margin-left:4px;"></span></div>
+  <!-- CARDS -->
+  <div class="cards">
+    <div class="card">
+      <div class="card-lbl">Budget YTD — Orçamento Acumulado</div>
+      <div class="card-val cg">R$ 18,0 MM</div>
+      <div class="card-sub">Limite YTD: R$ 18,5 MM &nbsp;·&nbsp; <span class="cg">▼ 2,7% dentro do orçamento</span></div>
+      <div class="card-info">Soma do orçamento (budget) realizado de Jan a Mai/26 (meta 3.1). Desvio calculado sobre a meta acumulada do período.</div>
     </div>
-    <div class="total-bar" id="total-bar-ytd" style="padding:14px 20px;">
-      <span class="total-bar-lbl" style="font-size:15px;">YTD</span>
-      <div class="total-bar-item"><span class="lbl">JAN–<span id="ytd-mes-fim">—</span></span></div>
-      <div class="total-bar-item"><span class="lbl">PESO</span><span class="val cy" id="ytd-peso-lbl" style="font-size:15px;">—</span></div>
-      <div class="total-bar-item"><span class="lbl">PESO ATING.</span><span class="val" id="ytd-ating-lbl" style="font-size:15px;">—</span> <span id="ytd-ating-pct" style="font-size:12px;font-weight:700;color:var(--gold);margin-left:4px;"></span></div>
+    <div class="card">
+      <div class="card-lbl">Delivery YTD — Receita Acumulada</div>
+      <div class="card-val cr">R$ 216,4 MM</div>
+      <div class="card-sub">Meta FY: R$ 695,7 MM &nbsp;·&nbsp; <span style="color:var(--muted)">31% do ano</span></div>
+      <div class="card-info">Acumulado de receita Delivery de Jan a Mai/26. Percentual do ano reflete a proporção já realizada sobre a meta anual.</div>
+    </div>
+    <div class="card">
+      <div class="card-lbl">Atingimento <span id="lbl-mes">MAI</span>/26 — Último Mês Fechado</div>
+      <div class="card-val" id="mai-pct">—</div>
+      <div class="card-sub">Esperado: 100% &nbsp;·&nbsp; <span id="mai-count">—</span></div>
+      <div class="card-info">% de metas que atingiram o resultado no último mês fechado, sobre o total de indicadores com realizado informado no período.</div>
+      <div class="total-bar" id="total-bar-global" style="margin-top:10px;width:100%;">
+        <span class="total-bar-lbl">MÊS</span>
+        <div class="total-bar-item"><span class="lbl">REF.</span><span class="val cy" id="grand-mes-lbl">—</span></div>
+        <div class="total-bar-item"><span class="lbl">PESO</span><span class="val cy" id="grand-peso-lbl">—</span></div>
+        <div class="total-bar-item"><span class="lbl">PESO ATING.</span><span class="val" id="grand-ating-lbl">—</span> <span id="grand-ating-pct" style="font-size:11px;font-weight:700;color:var(--gold);margin-left:4px;"></span></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-lbl">Atingimento YTD — Acumulado Ano</div>
+      <div class="card-val" id="ytd-pct2">—</div>
+      <div class="card-sub">Esperado: 100% &nbsp;·&nbsp; <span id="ytd-count">—</span></div>
+      <div class="card-info">% de metas com status Atingido no acumulado do ano, considerando todas as metas com realizado informado até o período.</div>
+      <div class="total-bar" id="total-bar-ytd" style="margin-top:10px;width:100%;">
+        <span class="total-bar-lbl">YTD</span>
+        <div class="total-bar-item"><span class="lbl">JAN–<span id="ytd-mes-fim">—</span></span></div>
+        <div class="total-bar-item"><span class="lbl">PESO</span><span class="val cy" id="ytd-peso-lbl">—</span></div>
+        <div class="total-bar-item"><span class="lbl">PESO ATING.</span><span class="val" id="ytd-ating-lbl">—</span> <span id="ytd-ating-pct" style="font-size:11px;font-weight:700;color:var(--gold);margin-left:4px;"></span></div>
+      </div>
     </div>
   </div>
 
