@@ -188,12 +188,13 @@
 
   .td-ytd { border-left: 1px solid var(--bdr2); font-weight: 600; }
 
-  .pill { display: inline-flex; align-items: center; gap: 4px; padding: 3px 9px; border-radius: 2px; font-size: 10px; font-weight: 700; letter-spacing: 0.5px; white-space: nowrap; text-transform: uppercase; }
-  .pill.g { background:#071a0f; color:var(--green); border:1px solid #0d3a1e; }
-  .pill.r { background:#1f0305; color:#e05060; border:1px solid #4a0810; }
-  .pill.y { background:#1c1500; color:var(--gold); border:1px solid #3a2a00; }
-  .pill.z { background:var(--s3); color:var(--muted); border:1px solid var(--bdr); }
-  .dot { width:5px; height:5px; border-radius:50%; background:currentColor; }
+  .pill { display: flex; align-items: center; justify-content: center; gap: 4px; font-size: 10px; font-weight: 700; letter-spacing: 1px; white-space: nowrap; text-transform: uppercase; width: 100%; height: 100%; position: absolute; top: 0; left: 0; right: 0; bottom: 0; }
+  .pill.g { background: #1a7a3a; color: #ffffff; }
+  .pill.r { background: #9a0f18; color: #ffffff; }
+  .pill.y { background: #8a6200; color: #ffffff; }
+  .pill.z { background: var(--s3); color: var(--muted); }
+  td:has(.pill) { padding: 0; position: relative; text-align: center; }
+  .dot { display: none; }
   .row-total td { background: #0e0e0e !important; border-top: 2px solid var(--gold-dk) !important; border-bottom: 2px solid var(--bdr2); font-weight: 700; font-size: 11px; }
   .row-total .total-lbl { color: var(--gold); text-align: left; font-family: 'Bebas Neue', sans-serif; letter-spacing: 2px; font-size: 13px; }
 
