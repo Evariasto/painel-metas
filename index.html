@@ -59,7 +59,12 @@
   .card-sub { font-size: 11px; color: var(--text2); margin-top: 5px; }
   .card-info { font-size: 10px; color: var(--muted); margin-top: 7px; padding-top: 7px; border-top: 1px solid var(--bdr); line-height: 1.4; font-style: italic; }
   .card-full { grid-column: 1 / -1; }
-  .filter-bar { display: flex; gap: 8px; margin-bottom: 14px; flex-wrap: wrap; }
+  .filter-bar { display: flex; gap: 8px; margin-bottom: 14px; flex-wrap: wrap; align-items: center; }
+  .total-bar { display: flex; align-items: center; gap: 0; background: #0e0e0e; border: 1px solid var(--gold-dk); border-radius: 3px; margin-left: auto; padding: 0 16px; height: 32px; gap: 24px; }
+  .total-bar-lbl { font-family: 'Bebas Neue', sans-serif; letter-spacing: 2px; font-size: 13px; color: var(--gold); }
+  .total-bar-item { display: flex; align-items: center; gap: 8px; font-size: 11px; font-weight: 700; }
+  .total-bar-item span.lbl { color: var(--text2); font-size: 10px; letter-spacing: 0.5px; text-transform: uppercase; }
+  .total-bar-item span.val { font-size: 13px; font-weight: 700; }
   .filter-btn { padding: 5px 14px; border-radius: 2px; border: 1px solid var(--bdr2); background: var(--s2); color: var(--text2); font-size: 10px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; cursor: pointer; transition: all .15s; }
   .filter-btn:hover { border-color: var(--gold); color: var(--gold); }
   .filter-btn.active-all { border-color: var(--gold); background: var(--gold); color: #1a1000; }
@@ -198,6 +203,11 @@
     <button class="filter-btn" data-filter="r">● Abaixo</button>
     <button class="filter-btn" data-filter="g">● Atingido</button>
     <button class="filter-btn" data-filter="y">● Atenção</button>
+    <div class="total-bar" id="total-bar-global">
+      <span class="total-bar-lbl">TOTAL GERAL</span>
+      <div class="total-bar-item"><span class="lbl">PESO</span><span class="val cy" id="grand-peso-lbl">—</span></div>
+      <div class="total-bar-item"><span class="lbl">PESO ATING.</span><span class="val" id="grand-ating-lbl">—</span></div>
+    </div>
   </div>
 
   <!-- BLOCO 3 -->
@@ -978,38 +988,14 @@
     });
   });
 
-  if (grandLastTable) {
-    const tRow = document.createElement('tr');
-    tRow.className = 'row-total';
-    const colsAfterPeso = grandTotalCols - 4;
-
-    const tdLbl = document.createElement('td');
-    tdLbl.colSpan = 3; tdLbl.className = 'tl total-lbl';
-    tdLbl.textContent = 'TOTAL GERAL';
-    tRow.appendChild(tdLbl);
-
-    const tdPeso = document.createElement('td');
-    tdPeso.className = 'td-ytd cy';
-    tdPeso.textContent = grandPeso.toFixed(1).replace('.',',') + '%';
-    tRow.appendChild(tdPeso);
-
-    const midCols = colsAfterPeso - 3;
-    for (let i = 0; i < midCols; i++) {
-      const td = document.createElement('td'); td.className = 'emp'; td.textContent = '';
-      tRow.appendChild(td);
-    }
-
-    const tdAting = document.createElement('td');
-    tdAting.className = 'td-ytd ' + (grandAtingido >= grandPeso * 0.7 ? 'cg' : grandAtingido >= grandPeso * 0.5 ? 'cy' : 'cr');
-    tdAting.textContent = grandAtingido.toFixed(1).replace('.',',') + '%';
-    tRow.appendChild(tdAting);
-
-    for (let i = 0; i < 2; i++) {
-      const td = document.createElement('td'); td.textContent = '';
-      tRow.appendChild(td);
-    }
-
-    grandLastTable.querySelector('tbody').appendChild(tRow);
+  // Preencher barra de TOTAL GERAL no topo (acima das tabelas)
+  const pesoLbl = document.getElementById('grand-peso-lbl');
+  const atingLbl = document.getElementById('grand-ating-lbl');
+  if (pesoLbl) pesoLbl.textContent = grandPeso.toFixed(1).replace('.',',') + '%';
+  if (atingLbl) {
+    const cls = grandAtingido >= grandPeso * 0.7 ? 'cg' : grandAtingido >= grandPeso * 0.5 ? 'cy' : 'cr';
+    atingLbl.className = 'val ' + cls;
+    atingLbl.textContent = grandAtingido.toFixed(1).replace('.',',') + '%';
   }
 </script>
 </body>
