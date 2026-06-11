@@ -26,24 +26,57 @@
     --text2:  #9a9080;
   }
   body.light-mode {
-    --bg:   #f4f1eb;
+    --bg:   #f5f5f5;
     --s1:   #ffffff;
-    --s2:   #ede9e0;
-    --s3:   #e0dbd0;
-    --bdr:  #d0c9bc;
-    --bdr2: #bdb6a8;
-    --muted:#888070;
+    --s2:   #efefef;
+    --s3:   #e2e2e2;
+    --bdr:  #cccccc;
+    --bdr2: #bbbbbb;
+    --muted:#666666;
     --text: #1a1a1a;
-    --text2:#5a5040;
+    --text2:#444444;
   }
-  body.light-mode .header { background: linear-gradient(135deg,#2a1e00 0%,#1a1000 60%); }
-  body.light-mode .hkpi, body.light-mode .row-meta td, body.light-mode .row-real td { color: var(--text); }
-  body.light-mode .col-id, body.light-mode .col-obj { background: var(--s1); }
-  body.light-mode .row-real .col-id, body.light-mode .row-real .col-obj { background: var(--bg); }
-  body.light-mode thead tr { background: var(--s3); }
-  body.light-mode .twrap { background: var(--s1); }
-  body.light-mode .card { background: var(--s1); }
-  body.light-mode .footer { background: var(--bg); }
+  body.light-mode { background: var(--bg); color: var(--text); }
+  body.light-mode .header { background: linear-gradient(135deg,#1a1200 0%,#111111 60%); }
+  body.light-mode .htitle h1 { color: #ffffff; }
+  body.light-mode .htitle p { color: #aaaaaa; }
+  body.light-mode .card { background: var(--s1); border-color: var(--bdr); }
+  body.light-mode .card-lbl { color: #555555; }
+  body.light-mode .card-sub { color: #555555; }
+  body.light-mode .card-info { color: #888888; border-top-color: var(--bdr); }
+  body.light-mode .twrap { background: var(--s1); border-color: var(--bdr); }
+  body.light-mode thead tr { background: #2a2a2a; }
+  body.light-mode thead th { color: #dddddd; }
+  body.light-mode th.th-current { background: #1a1200 !important; color: var(--gold-lt) !important; }
+  body.light-mode td { color: var(--text); border-bottom-color: var(--bdr); }
+  body.light-mode .row-meta td { background: #fafafa; }
+  body.light-mode .row-real td { background: #ffffff; border-bottom-color: var(--bdr2); }
+  body.light-mode .col-id  { background: #fafafa; }
+  body.light-mode .col-obj { background: #fafafa; }
+  body.light-mode .row-real .col-id  { background: #ffffff; }
+  body.light-mode .row-real .col-obj { background: #ffffff; }
+  body.light-mode thead .col-id, body.light-mode thead .col-obj { background: #2a2a2a; }
+  body.light-mode .td-current { background: #fffbe6 !important; }
+  body.light-mode .td-peso { background: #fffbe6 !important; color: #7a5a00 !important; }
+  body.light-mode .td-id { color: var(--gold-dk); }
+  body.light-mode .td-obj { color: var(--text); }
+  body.light-mode .td-obj small { color: #888888; }
+  body.light-mode .tipo.m { color: #8a6000; }
+  body.light-mode .tipo.r { color: #555555; }
+  body.light-mode .emp { color: #cccccc; }
+  body.light-mode .neu { color: #888888; }
+  body.light-mode .sec-hdr { border-bottom-color: var(--bdr); }
+  body.light-mode .sec-badge { background: var(--s2); border-color: var(--bdr); color: #555; }
+  body.light-mode .filter-btn { background: var(--s2); border-color: var(--bdr2); color: #444; }
+  body.light-mode .filter-btn.active-all { background: var(--gold); border-color: var(--gold); color: #1a1000; }
+  body.light-mode .row-total td { background: #f0f0f0 !important; border-top-color: var(--gold-dk) !important; }
+  body.light-mode .footer { color: #888888; border-top-color: var(--bdr); }
+  body.light-mode .td-area:has(.aop) { background:#ddeeff; color:#1a5a99; }
+  body.light-mode .td-area:has(.aql) { background:#ddffee; color:#1a7a40; }
+  body.light-mode .td-area:has(.arh) { background:#eeddff; color:#6633aa; }
+  body.light-mode .td-area:has(.aco) { background:#fff3cc; color:#7a5a00; }
+  body.light-mode .td-area:has(.afp) { background:#eeeeee; color:#555555; }
+  body.light-mode .td-area:has(.apr) { background:#ddeeff; color:#1a5a99; }
 
   /* BOTÃO THEME */
   .theme-btn { margin-left: 16px; background: transparent; border: 1px solid var(--gold-dk); border-radius: 20px; color: var(--gold); font-size: 11px; font-weight: 700; letter-spacing: 1px; padding: 4px 12px; cursor: pointer; transition: all .2s; white-space: nowrap; align-self: center; }
